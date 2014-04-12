@@ -107,7 +107,6 @@ func (o Object) Intersection(c, v V3d) (t float64, n V3d) {
 	default:
 		log.Fatal("Unknown object type", o.Type)
 	}
-	// TODO:
 	return
 }
 
