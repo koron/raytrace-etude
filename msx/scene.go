@@ -20,14 +20,14 @@ type Shading struct {
 	Diffuse     float64
 	Mirror      float64
 	Surface     float64
-	Specularity float64
+	Specularity int
 }
 
 type Object struct {
 	Position      V3d
 	Size          V3d
 	Type
-	ShadingNumber uint
+	ShadingNumber int
 }
 
 func (o Object) Intersection(c, v V3d) (t float64, n V3d) {
