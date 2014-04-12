@@ -1,10 +1,12 @@
 package main
 
-type Object struct {
-	Position      V3d
-	Size          V3d
-	Type          uint
-	ShadingNumber uint
+type Scene struct {
+	Camera   V3d
+	Target   V3d
+	Light    V3d
+	Zoom     float64
+	Objects  []Object
+	Shadings []Shading
 }
 
 type Shading struct {
@@ -16,13 +18,11 @@ type Shading struct {
 	Specularity float64
 }
 
-type Scene struct {
-	Camera   V3d
-	Target   V3d
-	Light    V3d
-	Zoom     float64
-	Objects  []Object
-	Shadings []Shading
+type Object struct {
+	Position      V3d
+	Size          V3d
+	Type          uint
+	ShadingNumber uint
 }
 
 func Scene1() Scene {

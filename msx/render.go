@@ -4,11 +4,16 @@ import (
 	"image"
 )
 
-func size(i image.Image) (w, h int) {
-	r := i.Bounds()
-	w = r.Max.X - r.Min.X
-	h = r.Max.Y - r.Min.Y
-	return
+type Data struct {
+	Scene
+	Gaze V3d
+}
+
+func NewData(s Scene) Data {
+	return Data{
+		Scene: s,
+		Gaze: s.Target.Sub(s.Camera).Norm(),
+	}
 }
 
 func trace_ray() Color {
