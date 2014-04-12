@@ -9,13 +9,24 @@ type Data struct {
 	Scene
 	Near float64
 	Gaze V3d
+	V3 V3d
+	V6 V3d
 }
 
 func NewData(s Scene) Data {
+	v9 := s.Camera.Sub(s.Target).Norm()
+	v6 := V3d{-v9.X * v9.Y, 1 - v9.Y*v9.Y, -v9.Z * v9.Y}
+	v3 := V3d{
+		-(v9.Y*v6.Z - v9.Z*v6.Y),
+		-(v9.Z*v6.X - v9.X*v6.Z),
+		-(v9.X*v6.Y - v9.Y*v6.X),
+	}
 	return Data{
 		Scene: s,
 		Near:  1e-3,
-		Gaze:  s.Target.Sub(s.Camera).Norm(),
+		Gaze:  v9,
+		V3:    v3,
+		V6:    v6,
 	}
 }
 
@@ -47,9 +58,14 @@ func Render(s Scene, i *image.RGBA) error {
 	d := NewData(s)
 	w, h := size(i)
 	for y := 0; y < h; y += 1 {
+		fy := float64(h / 2 - y) / 99.0
 		for x := 0; x < w; x += 1 {
-			// TODO: calc v.
-			v := V3d{0, 0, 0}
+			fx := float64(x - w / 2) / 99.0
+			v := V3d{
+				d.V3.X * fx + d.V6.X * fy - d.Gaze.X * d.Scene.Zoom,
+				d.V3.Y * fx + d.V6.Y * fy - d.Gaze.Y * d.Scene.Zoom,
+				d.V3.Z * fx + d.V6.Z * fy - d.Gaze.Z * d.Scene.Zoom,
+			}.Norm()
 			c := trace_ray(d, v)
 			i.Set(x, y, &c)
 		}
