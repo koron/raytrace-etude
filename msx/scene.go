@@ -82,9 +82,9 @@ func (o Object) Intersection(c, v V3d) (t float64, n V3d) {
 		}
 
 	case Sphere:
-		aa := v.X * v.X * o.Size.Y + v.Y * v.Y * o.Size.Y + v.Z * v.Z * o.Size.Z
-		bb := r.X * v.X * o.Size.Y + r.Y * v.Y * o.Size.Y + r.Z * v.Z * o.Size.Z
-		cc := r.X * r.X * o.Size.Y + r.Y * r.Y * o.Size.Y + r.Z * r.Z * o.Size.Z - 1
+		aa := v.X * v.X * o.Size.X + v.Y * v.Y * o.Size.Y + v.Z * v.Z * o.Size.Z
+		bb := r.X * v.X * o.Size.X + r.Y * v.Y * o.Size.Y + r.Z * v.Z * o.Size.Z
+		cc := r.X * r.X * o.Size.X + r.Y * r.Y * o.Size.Y + r.Z * r.Z * o.Size.Z - 1
 		dd := bb * bb - aa * cc
 		if dd < 0 {
 			return
@@ -99,9 +99,9 @@ func (o Object) Intersection(c, v V3d) (t float64, n V3d) {
 		}
 
 		n = V3d{
-			o.Size.X * + t * v.X,
-			o.Size.Y * + t * v.Y,
-			o.Size.Z * + t * v.Z,
+			o.Size.X * (r.X + t * v.X),
+			o.Size.Y * (r.Y + t * v.Y),
+			o.Size.Z * (r.Z + t * v.Z),
 		}.Norm()
 
 	default:

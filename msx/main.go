@@ -39,7 +39,7 @@ func save(s Scene, w, h int, fname string) error {
 }
 
 func main() {
-	s := Scene1()
+	s := Scene2()
 	err := save(s, 256, 212, "out.png")
 	if err != nil {
 		log.Fatal(err)

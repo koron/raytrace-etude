@@ -75,9 +75,6 @@ func shade(d Data, c, v V3d, o Object, l V3d, depth int) Color {
 		sm = sm * sm
 	}
 
-	vn := -2 * (l.Dot(v))
-	w := V3d{v.X + vn*l.X, v.Y + vn*l.Y, v.Z + vn*l.Z}
-
 	sn := l.Dot(d.V12.Norm())
 	if sn < 0 {
 		sn = 0
@@ -89,6 +86,9 @@ func shade(d Data, c, v V3d, o Object, l V3d, depth int) Color {
 	if s.Mirror < .01 || depth == 0 {
 		return co
 	} else {
+		vn := -2 * (l.Dot(v))
+		w := v.Add(l.Mul(vn)).Norm()
+		//w := V3d{v.X + vn*l.X, v.Y + vn*l.Y, v.Z + vn*l.Z}
 		return co.Add(trace_ray(d, c, w, depth-1).Mul(s.Mirror))
 	}
 }
