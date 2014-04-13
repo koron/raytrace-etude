@@ -22,6 +22,10 @@ func (c *Color) RGBA() (r, g, b, a uint32) {
 	return
 }
 
+func (c Color) AddSingle(v float64) Color {
+	return Color{c.R + v, c.G + v, c.B + v}
+}
+
 func (c Color) Add(d Color) Color {
 	return Color{c.R + d.R, c.G + d.G, c.B + d.B}
 }

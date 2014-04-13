@@ -12,6 +12,7 @@ type Data struct {
 	Gaze V3d
 	V3   V3d
 	V6   V3d
+	V12  V3d
 }
 
 func NewData(s Scene) Data {
@@ -26,26 +27,27 @@ func NewData(s Scene) Data {
 		Scene: s,
 		Near:  1e-3,
 		Pt:    4,
-		Gaze:  v9,
-		V3:    v3,
-		V6:    v6,
+		Gaze:  v9.Norm(),
+		V3:    v3.Norm(),
+		V6:    v6.Norm(),
+		V12:   s.Light.Norm(),
 	}
 }
 
 func cross(d Data, v V3d) (o *Object, tt float64, l V3d) {
 	tt = math.Inf(0)
-	for _, p := range d.Scene.Objects {
+	for i, p := range d.Scene.Objects {
 		t, n := p.Intersection(d.Scene.Camera, v)
 		if t < tt && t > d.Near {
 			tt = t
 			l = n
-			o = &p
+			o = &d.Scene.Objects[i]
 		}
 	}
 	return
 }
 
-func shade(d Data, c, v V3d, o Object, l V3d) Color {
+func shade(d Data, c, v V3d, o Object, l V3d, depth int) Color {
 	sh := o.ShadingNumber
 	if sh < 0 {
 		px := int(math.Abs(c.X+100) / d.Pt)
@@ -62,12 +64,10 @@ func shade(d Data, c, v V3d, o Object, l V3d) Color {
 		}
 		sh = (px + py + pz) % 2
 	}
-
 	s := d.Scene.Shadings[sh]
-	j := d.Scene.Light.Sub(v)
 
-	jn := j.Len()
-	sm := l.Dot(j) / jn
+	j := d.V12.Sub(v)
+	sm := l.Dot(j.Norm())
 	if sm < 0 {
 		sm = 0
 	}
@@ -78,18 +78,28 @@ func shade(d Data, c, v V3d, o Object, l V3d) Color {
 	vn := -2 * (l.Dot(v))
 	w := V3d{v.X + vn*l.X, v.Y + vn*l.Y, v.Z + vn*l.Z}
 
+	sn := l.Dot(d.V12.Norm())
+	if sn < 0 {
+		sn = 0
+	}
+
 	// TODO: shade
 
-	return Color{0, 0, 0}
+	co := s.Color.Mul(s.Ambient + s.Diffuse*sn).AddSingle(s.Surface * sm)
+	if s.Mirror < .01 || depth == 0 {
+		return co
+	} else {
+		return co.Add(trace_ray(d, c, w, depth-1).Mul(s.Mirror))
+	}
 }
 
-func trace_ray(d Data, c, v V3d) Color {
+func trace_ray(d Data, c, v V3d, depth int) Color {
 	o, t, l := cross(d, v)
 	if o == nil {
 		return Color{0, 0, 0}
 	}
 	c = c.Add(v.Mul(t))
-	return shade(d, c, v, *o, l)
+	return shade(d, c, v, *o, l, depth)
 }
 
 func Render(s Scene, i *image.RGBA) error {
@@ -104,7 +114,7 @@ func Render(s Scene, i *image.RGBA) error {
 				d.V3.Y*fx + d.V6.Y*fy - d.Gaze.Y*d.Scene.Zoom,
 				d.V3.Z*fx + d.V6.Z*fy - d.Gaze.Z*d.Scene.Zoom,
 			}.Norm()
-			c := trace_ray(d, d.Scene.Camera, v)
+			c := trace_ray(d, d.Scene.Camera, v, 3)
 			i.Set(x, y, &c)
 		}
 	}
