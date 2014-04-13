@@ -1,4 +1,4 @@
-// Port of MSX2+ パワフル活用法
+// Ray tracer ported from MSX2+ パワフル活用法
 
 package main
 
