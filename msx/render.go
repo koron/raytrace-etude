@@ -34,10 +34,10 @@ func NewData(s Scene) Data {
 	}
 }
 
-func cross(d Data, v V3d) (o *Object, tt float64, l V3d) {
+func cross(d Data, c, v V3d) (o *Object, tt float64, l V3d) {
 	tt = math.Inf(0)
 	for i, p := range d.Scene.Objects {
-		t, n := p.Intersection(d.Scene.Camera, v)
+		t, n := p.Intersection(c, v)
 		if t < tt && t > d.Near {
 			tt = t
 			l = n
@@ -75,12 +75,16 @@ func shade(d Data, c, v V3d, o Object, l V3d, depth int) Color {
 		sm = sm * sm
 	}
 
-	sn := l.Dot(d.V12.Norm())
+	sn := l.Dot(d.V12)
 	if sn < 0 {
 		sn = 0
 	}
 
-	// TODO: shade
+	// shadow
+	if o2, _, _ := cross(d, c, d.V12); o2 != nil {
+		sn = 0
+		sm = 0
+	}
 
 	co := s.Color.Mul(s.Ambient + s.Diffuse*sn).AddSingle(s.Surface * sm)
 	if s.Mirror < .01 || depth == 0 {
@@ -88,13 +92,12 @@ func shade(d Data, c, v V3d, o Object, l V3d, depth int) Color {
 	} else {
 		vn := -2 * (l.Dot(v))
 		w := v.Add(l.Mul(vn)).Norm()
-		//w := V3d{v.X + vn*l.X, v.Y + vn*l.Y, v.Z + vn*l.Z}
 		return co.Add(trace_ray(d, c, w, depth-1).Mul(s.Mirror))
 	}
 }
 
 func trace_ray(d Data, c, v V3d, depth int) Color {
-	o, t, l := cross(d, v)
+	o, t, l := cross(d, c, v)
 	if o == nil {
 		return Color{0, 0, 0}
 	}
