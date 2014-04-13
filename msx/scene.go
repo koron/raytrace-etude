@@ -41,7 +41,7 @@ func (o Object) Intersection(c, v V3d) (t float64, n V3d) {
 		} else if r.X < 0 {
 			t1 = -(r.X + o.Size.X) / v.X
 		} else {
-			t1 = -(r.X + o.Size.X) / v.X
+			t1 = -(r.X - o.Size.X) / v.X
 		}
 		if v.Y == 0 {
 			t2 = math.Inf(0)
