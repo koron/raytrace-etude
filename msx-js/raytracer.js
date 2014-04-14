@@ -357,7 +357,7 @@ RayTracer.prototype.getCross = function(from, dir) {
   for (var i = 0; i < items.length; ++i) {
     var n = items[i];
     var p = n.getCross(from, dir);
-    if (p && p.distance < r.distance) {
+    if (p && p.distance < r.distance && p.distance > 1e-3) {
       r.distance = p.distance;
       r.normal = p.normal;
       r.shadeNum = n.shadeNum;
