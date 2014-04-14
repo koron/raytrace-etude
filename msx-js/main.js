@@ -106,7 +106,10 @@ var scene2 = {
 function main() {
   var c = window.document.getElementById('c');
   var rt = new RayTracer(c, 256, 212, scene2);
+  var s = new Date().getTime();
   rt.render();
+  var d = new Date().getTime() - s;
+  console.log('rendered in', d / 1000, 'sec');
 }
 
 window.addEventListener('load', main);
