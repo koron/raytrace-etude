@@ -96,7 +96,7 @@ var scene2 = {
       color:    [.0, .0, .0],
       ambient:  .3,
       diffuse:  .6,
-      mirror:   .1,
+      mirror:    1,
       surface:  .9,
       specular:  8
     },
