@@ -369,15 +369,15 @@ RayTracer.prototype.getCross = function(from, dir) {
 RayTracer.prototype.getShading = function(pos, shadeNum) {
   if (shadeNum < 0) {
     var x, y, z;
-    x = Math.round(Math.abs(pos.x + 100) / 4);
+    x = Math.floor(Math.abs(pos.x + 100) / 4);
     if (pos.x + 100 < 0) {
       x -= 1;
     }
-    y = Math.round(Math.abs(pos.y + 100) / 4);
+    y = Math.floor(Math.abs(pos.y + 100) / 4);
     if (pos.y + 100 < 0) {
       y -= 1;
     }
-    z = Math.round(Math.abs(pos.z + 100) / 4);
+    z = Math.floor(Math.abs(pos.z + 100) / 4);
     if (pos.z + 100 < 0) {
       z -= 1;
     }
