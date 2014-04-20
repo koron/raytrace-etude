@@ -1,0 +1,3 @@
+[Ported to GLSL](http://jsdo.it/c5h12/8RmT) by [c5h12](https://twitter.com/c5h12/status/456395648774840320)
+
+Thank you!
