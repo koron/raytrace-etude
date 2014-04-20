@@ -6,8 +6,7 @@ function createProgram(window, gl) {
   gl.compileShader(vsh);
 
   var fsh = gl.createShader(gl.FRAGMENT_SHADER);
-  var shaderSrc = window.document.getElementById('fragmentShaderSrc').textContent;
-  gl.shaderSource(fsh, shaderSrc);
+  gl.shaderSource(fsh, window.fragmentShaderSrc());
   gl.compileShader(fsh);
 
   var prog = gl.createProgram();
