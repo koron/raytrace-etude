@@ -76,6 +76,15 @@ function main() {
     e.preventDefault();
     mouse.dragging = false;
   }
+  var onMouseWheelFirefox = function(e) {
+    e.preventDefault();
+    mouse.z += e.detail / 2.5;
+    if (mouse.z < 10) {
+      mouse.z = 10;
+    } else if (mouse.z > 100) {
+      mouse.z = 100;
+    }
+  }
   var onMouseWheel = function(e) {
     e.preventDefault();
     mouse.z -= e.wheelDelta / 10;
@@ -103,15 +112,19 @@ function main() {
 
     if (mouse.y < 0.0) {
       mouse.y = 0.0;
-    } else if (mouse.y > 0.5) {
-      mouse.y = 0.5;
+    } else if (mouse.y > 0.49) {
+      mouse.y = 0.49;
     }
   };
   canvas.addEventListener('mousedown', onMouseDown);
   canvas.addEventListener('mouseup', onMouseUp);
   canvas.addEventListener('mouseout', onMouseUp);
   canvas.addEventListener('mousemove', onMouseMove);
-  canvas.addEventListener('mousewheel', onMouseWheel);
+  if (window.MouseScrollEvent) {
+    canvas.addEventListener('DOMMouseScroll', onMouseWheelFirefox);
+  } else {
+    canvas.addEventListener('mousewheel', onMouseWheel);
+  }
 
   canvas.width = 256;
   canvas.height = 212;
