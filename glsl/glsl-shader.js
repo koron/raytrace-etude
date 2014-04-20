@@ -5,16 +5,32 @@ precision mediump float;
 #endif
 
 uniform vec2 resolution;
-uniform vec2 mouse;
+uniform vec3 mouse;
 
 #define EPS 1e-8
 #define INF 1e8
 
-vec3 rotY(vec3 p,float a){
+vec3 rotX(vec3 p, float a) {
     float s = sin(a);
     float c = cos(a);
-    return vec3( p.z * s + p.x * c, p.y, p.z * c - p.x * s);
+    return vec3(p.x, p.z * s + p.y * c, p.z * c - p.y * s);
 }
+
+vec3 rotY(vec3 p, float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return vec3(p.z * s + p.x * c, p.y, p.z * c - p.x * s);
+}
+
+vec3 rotZ(vec3 p, float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return vec3(
+      p.x * c + p.y * s,
+      p.x * s - p.y * c,
+      p.z);
+}
+
 
 vec3 camera;
 const vec3 target = vec3(0.0, 0.0, 0.0);
@@ -52,9 +68,13 @@ struct TraceResult {
 };
 
 void setup() {
-    vec2 mp = mouse * 2.0 - 1.0;
 
-    camera = vec3(20.0, 40.0, 20.0);
+    camera = vec3(mouse.z, 0.0, 0.0);
+    camera = rotZ(camera, mouse.y * 3.14159265);
+    camera = rotY(camera, mouse.x * 3.14159265);
+
+    //vec2 mp = mouse * 2.0 - 1.0;
+    //camera = vec3(20.0, 40.0, 20.0);
     //camera = rotY(vec3(20.0, 20.0 *(1.0 + mp.y), 20.0), mp.x * -3.14159);
 
     v9 = normalize(camera - target);
